@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json.Nodes;
+using System.Timers;
 using System.Web;
 
 namespace Loupedeck.WeatherWidgetPlugin
@@ -10,20 +11,33 @@ namespace Loupedeck.WeatherWidgetPlugin
 	{
 		protected HttpClient httpClient = new HttpClient();
 		protected IDictionary<string, WidgetData> widgetData = new Dictionary<string, WidgetData>();
+		protected IDictionary<string, BitmapImage> imagesCache = new Dictionary<string, BitmapImage>();
+		protected Timer timer;
 
 		protected class WidgetData
 		{
-			public string Name { get; set; }
-			public float Temperature { get; set; }
+			public string Name;
+			public float Temperature;
+			public BitmapImage WeatherIcon;
 
-			public BitmapImage Icon { get; set; }
+			public bool IsValid = false;
+			public bool IsLoading = false;
+			public IDictionary<PluginImageSize, BitmapImage> IconsCache = new Dictionary<PluginImageSize, BitmapImage>();
 		}
 
 		public WeatherWidgetCommand() : base("_", "_", "_") {
 			this.DisplayName = "Weather Widget";
-			this.Description = "Shows weather info for a given area";
+			this.Description = "Shows weather info for a given area. Automatically updates every 5 minutes (or on click).";
 			this.GroupName = "Weather";
 			this.MakeProfileAction("text;Location and Weather API key (separate with ':', for example 'New York:10245'). You can get a free key on weatherapi.com.");
+
+			timer = new Timer(/*60 **/ 5 * 1000);
+			timer.Elapsed += (Object, ElapsedEventArgs) => {
+				foreach (string actionParameter in new List<string>(widgetData.Keys))
+					LoadData(actionParameter);
+			};
+			timer.AutoReset = true;
+			timer.Enabled = true;
 		}
 
 		protected override void RunCommand(string actionParameter) {
@@ -32,40 +46,51 @@ namespace Loupedeck.WeatherWidgetPlugin
 
 		protected override BitmapImage GetCommandImage(string actionParameter, PluginImageSize imageSize) {
 			if (actionParameter == null)
-				return base.GetCommandImage(actionParameter, imageSize);
+				return null;
 
-			WidgetData d;
+			WidgetData d = GetWidgetData(actionParameter);
+			if (!d.IsValid)
+				return null;
 
-			// No widget data -> request load
-			if (!widgetData.TryGetValue(actionParameter, out d)) {
-				LoadData(actionParameter);
-				return base.GetCommandImage(actionParameter, imageSize);
-			}
-
-			// Data is loading -> wait for load, this function will get called again
-			if (d == null)
-				return base.GetCommandImage(actionParameter, imageSize);
+			if (d.IconsCache.TryGetValue(imageSize, out BitmapImage r))
+				return r;
 
 			var img = new BitmapBuilder(imageSize);
 			img.Clear(BitmapColor.Black);
-			img.DrawImage(d.Icon);
+
+			if (d.WeatherIcon != null)
+				img.DrawImage(d.WeatherIcon);
+
 			img.FillRectangle(0, 0, img.Width, img.Height, new BitmapColor(0, 0, 0, 96));
 			img.DrawText($"{d.Name}\n\u00A0\n{d.Temperature} °C"); // NBSP on the middle line to prevent collation
-			return img.ToImage();
+
+			r = img.ToImage();
+			imagesCache[actionParameter] = r;
+			return r;
+		}
+
+		protected WidgetData GetWidgetData(string actionParameter) {
+			WidgetData d;
+			if (widgetData.TryGetValue(actionParameter, out d))
+				return d;
+
+			d = new WidgetData();
+			widgetData[actionParameter] = d;
+
+			LoadData(actionParameter);
+
+			return d;
 		}
 
 		protected async void LoadData(string actionParameter) {
 			if (actionParameter == null)
 				return;
 
-			WidgetData d;
-			// Data exists and is null -> data is loading
-			if (widgetData.TryGetValue(actionParameter, out d) && d == null)
+			WidgetData d = GetWidgetData(actionParameter);
+			if (d.IsLoading)
 				return;
 
-			// Mark that the data is loading
-			widgetData[actionParameter] = null;
-			d = new WidgetData();
+			d.IsLoading = true;
 
 			try {
 				string[] args = actionParameter.Split(':');
@@ -81,17 +106,19 @@ namespace Loupedeck.WeatherWidgetPlugin
 				d.Temperature = json["current"]["temp_c"].GetValue<float>();
 
 				HttpResponseMessage iconRes = await httpClient.GetAsync("https:" + json["current"]["condition"]["icon"].GetValue<string>());
-				d.Icon = BitmapImage.FromArray(await iconRes.Content.ReadAsByteArrayAsync());
-
-				widgetData[actionParameter] = d;
-				ActionImageChanged(actionParameter);
+				d.WeatherIcon = BitmapImage.FromArray(await iconRes.Content.ReadAsByteArrayAsync());
+				d.IconsCache.Clear();
 			}
-			catch(Exception e) {
+			catch (Exception e) {
 				d.Name = e.Message;
 				widgetData[actionParameter] = d;
 				ActionImageChanged(actionParameter);
 			}
+			finally {
+				d.IsLoading = false;
+				d.IsValid = true;
+				ActionImageChanged(actionParameter);
+			}
 		}
-
 	}
 }
