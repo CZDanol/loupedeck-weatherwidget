@@ -11,3 +11,4 @@ Simple widget for showing weather info in a given location.
 
 ## Credits
 * Made by Danol.
+* Plugin icon from awesome [Icons8](https://icons8.com/).

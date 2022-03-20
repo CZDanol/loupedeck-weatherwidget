@@ -61,12 +61,12 @@ namespace Loupedeck.WeatherWidgetPlugin
 			if (d.WeatherIcon != null)
 				img.DrawImage(d.WeatherIcon);
 
-			img.FillRectangle(0, 0, img.Width, img.Height, new BitmapColor(0, 0, 0, 96));
+			img.FillRectangle(0, 0, img.Width, img.Height, new BitmapColor(0, 0, 0, 128));
 			img.DrawText($"{d.Name}\n\u00A0\n{d.Temperature} °C"); // NBSP on the middle line to prevent collation
 
-			r = img.ToImage();
-			imagesCache[actionParameter] = r;
-			return r;
+			BitmapImage r2 = img.ToImage();
+			imagesCache[actionParameter] = r2;
+			return r2;
 		}
 
 		protected WidgetData GetWidgetData(string actionParameter) {
