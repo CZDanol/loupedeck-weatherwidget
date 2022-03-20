@@ -17,7 +17,7 @@ namespace Loupedeck.WeatherWidgetPlugin
 		protected class WidgetData
 		{
 			public string Name;
-			public float Temperature;
+			public float Temperature = -999;
 			public BitmapImage WeatherIcon;
 
 			public bool IsValid = false;
@@ -31,7 +31,8 @@ namespace Loupedeck.WeatherWidgetPlugin
 			this.GroupName = "Weather";
 			this.MakeProfileAction("text;Location and Weather API key (separate with ':', for example 'New York:10245'). You can get a free key on weatherapi.com.");
 
-			timer = new Timer(/*60 **/ 5 * 1000);
+			// Reload the data periodically every 5 minutes
+			timer = new Timer(60 * 5 * 1000);
 			timer.Elapsed += (Object, ElapsedEventArgs) => {
 				foreach (string actionParameter in new List<string>(widgetData.Keys))
 					LoadData(actionParameter);
@@ -62,7 +63,7 @@ namespace Loupedeck.WeatherWidgetPlugin
 				img.DrawImage(d.WeatherIcon);
 
 			img.FillRectangle(0, 0, img.Width, img.Height, new BitmapColor(0, 0, 0, 128));
-			img.DrawText($"{d.Name}\n\u00A0\n{d.Temperature} °C"); // NBSP on the middle line to prevent collation
+			img.DrawText($"{d.Name}\n\u00A0\n{d.Temperature} °C"); // NBSP on the middle line to prevent coalescing
 
 			BitmapImage r2 = img.ToImage();
 			imagesCache[actionParameter] = r2;
