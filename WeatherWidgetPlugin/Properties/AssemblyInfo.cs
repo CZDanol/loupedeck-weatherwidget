@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WeatherWidget plugin for Loupedeck")]
+[assembly: AssemblyTitle("Weather Widget")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("LoupeDeck Oy")]
+[assembly: AssemblyCompany("Danol")]
 [assembly: AssemblyProduct("Loupedeck2")]
-[assembly: AssemblyCopyright("Copyright (c) 2018 LoupeDeck Oy. All rights reserved.")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
