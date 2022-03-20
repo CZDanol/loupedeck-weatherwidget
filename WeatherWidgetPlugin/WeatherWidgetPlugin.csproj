@@ -81,6 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClockCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WeatherWidgetApplication.cs" />
     <Compile Include="WeatherWidgetCommand.cs" />

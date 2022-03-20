@@ -12,6 +12,7 @@ namespace Loupedeck.WeatherWidgetPlugin
 		protected HttpClient httpClient = new HttpClient();
 		protected IDictionary<string, WidgetData> widgetData = new Dictionary<string, WidgetData>();
 		protected IDictionary<string, BitmapImage> imagesCache = new Dictionary<string, BitmapImage>();
+		protected IDictionary<string, BitmapImage> weatherImagesCache = new Dictionary<string, BitmapImage>();
 		protected Timer timer;
 
 		protected class WidgetData
@@ -106,8 +107,13 @@ namespace Loupedeck.WeatherWidgetPlugin
 				d.Name = json["location"]["name"].GetValue<string>();
 				d.Temperature = json["current"]["temp_c"].GetValue<float>();
 
-				HttpResponseMessage iconRes = await httpClient.GetAsync("https:" + json["current"]["condition"]["icon"].GetValue<string>());
-				d.WeatherIcon = BitmapImage.FromArray(await iconRes.Content.ReadAsByteArrayAsync());
+				string weatherIconUrl = "https:" + json["current"]["condition"]["icon"].GetValue<string>();
+				if (!weatherImagesCache.TryGetValue(weatherIconUrl, out d.WeatherIcon)) {
+					HttpResponseMessage iconRes = await httpClient.GetAsync(weatherIconUrl);
+					d.WeatherIcon = BitmapImage.FromArray(await iconRes.Content.ReadAsByteArrayAsync());
+					weatherImagesCache[weatherIconUrl] = d.WeatherIcon;
+				}
+
 				d.IconsCache.Clear();
 			}
 			catch (Exception e) {
