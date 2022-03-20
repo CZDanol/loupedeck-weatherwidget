@@ -4,23 +4,14 @@ namespace Loupedeck.WeatherWidgetPlugin
 
 	public class WeatherWidgetPlugin : Plugin
 	{
-		public override void Load() {
+		public override bool HasNoApplication => true;
+
+		public override bool UsesApplicationApiOnly => true;
+
+		public override void RunCommand(string commandName, string parameter) {
 		}
 
-		public override void Unload() {
-		}
-
-		private void OnApplicationStarted(Object sender, EventArgs e) {
-		}
-
-		private void OnApplicationStopped(Object sender, EventArgs e) {
-		}
-
-		public override void RunCommand(String commandName, String parameter) {
-
-		}
-
-		public override void ApplyAdjustment(String adjustmentName, String parameter, Int32 diff) {
+		public override void ApplyAdjustment(string adjustmentName, string parameter, int diff) {
 		}
 	}
 }
