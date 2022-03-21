@@ -96,9 +96,6 @@ namespace Loupedeck.WeatherWidgetPlugin
 
 			try {
 				string[] args = actionParameter.Split(':');
-				if (args.Length < 2)
-					return;
-
 				string location = args[0].Trim(), apiKey = args[1].Trim();
 
 				HttpResponseMessage jsonRes = await httpClient.GetAsync($"https://api.weatherapi.com/v1/current.json?key={apiKey}&q={HttpUtility.UrlEncode(location)}&aqi=no");
