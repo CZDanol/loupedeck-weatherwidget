@@ -110,17 +110,14 @@ namespace Loupedeck.WeatherWidgetPlugin
 					d.WeatherIcon = BitmapImage.FromArray(await iconRes.Content.ReadAsByteArrayAsync());
 					weatherImagesCache[weatherIconUrl] = d.WeatherIcon;
 				}
-
-				d.IconsCache.Clear();
 			}
 			catch (Exception e) {
 				d.Name = e.Message;
-				widgetData[actionParameter] = d;
-				ActionImageChanged(actionParameter);
 			}
 			finally {
 				d.IsLoading = false;
 				d.IsValid = true;
+				d.IconsCache.Clear();
 				ActionImageChanged(actionParameter);
 			}
 		}
