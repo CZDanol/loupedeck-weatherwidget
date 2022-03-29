@@ -1,0 +1,14 @@
+﻿type: plugin4
+name: 'Loupedeck_WeatherWidget'
+displayName: 'Weather Widget'
+version: 1.0.0
+author: Danol
+copyright: (c) 2022 Danol
+
+supportedDevices:
+  - LoupedeckCt
+  - LoupedeckLive
+
+pluginFileName: Loupedeck_WeatherWidgetPlugin.dll
+pluginFolderWin: ./bin/win/
+pluginFolderMac: ./bin/mac/

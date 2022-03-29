@@ -15,7 +15,7 @@ namespace Loupedeck.WeatherWidgetPlugin
 			AddParameter("d. M.\ndddd", "Date (with day of week)", group);
 
 			// Update icons periodically
-			timer = new Timer(60 * 1000);
+			timer = new Timer(10 * 1000);
 			timer.Elapsed += (Object, ElapsedEventArgs) => {
 				ActionImageChanged();
 			};

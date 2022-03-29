@@ -1,8 +1,8 @@
-namespace Loupedeck.WeatherWidgetPlugin
+namespace Loupedeck.Loupedeck_WeatherWidgetPlugin
 {
 	using System;
 
-	public class WeatherWidgetPlugin : Plugin
+	public class Loupedeck_WeatherWidgetPlugin : Plugin
 	{
 		public override bool HasNoApplication => true;
 
