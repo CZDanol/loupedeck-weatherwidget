@@ -1,7 +1,7 @@
 ﻿type: plugin4
 name: 'Loupedeck_WeatherWidget'
 displayName: 'Weather Widget'
-version: 1.0.0
+version: 1.0.0.1
 author: Danol
 copyright: (c) 2022 Danol
 
@@ -11,4 +11,10 @@ supportedDevices:
 
 pluginFileName: Loupedeck_WeatherWidgetPlugin.dll
 pluginFolderWin: ./bin/win/
-pluginFolderMac: ./bin/mac/
+#pluginFolderMac: ./bin/mac/
+
+license: MIT
+licenseUrl: https://opensource.org/licenses/MIT
+
+homePageUrl: https://github.com/CZDanol/loupedeck-weatherwidget
+supportPageUrl: https://github.com/CZDanol/loupedeck-weatherwidget
